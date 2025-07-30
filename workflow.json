@@ -1,0 +1,62 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "path": "generate-pitch",
+        "method": "POST",
+        "responseMode": "onReceived"
+      },
+      "name": "HTTP Trigger",
+      "type": "n8n-nodes-base.httpTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"Generate a professional pitch for the following job description: {{ $json[\\\"job_description\\\"] }} and the user's profile: {{ $json[\\\"user_data\\\"] }}\" }\n      ]\n    }\n  ]\n}"
+      },
+      "name": "Call Gemini API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "responseMode": "onReceived",
+        "responseData": "={{ $node[\"Call Gemini API\"].json[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"] }}"
+      },
+      "name": "Return Pitch",
+      "type": "n8n-nodes-base.httpResponse",
+      "typeVersion": 1,
+      "position": [600, 300]
+    }
+  ],
+  "connections": {
+    "HTTP Trigger": {
+      "main": [
+        [
+          {
+            "node": "Call Gemini API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Gemini API": {
+      "main": [
+        [
+          {
+            "node": "Return Pitch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
