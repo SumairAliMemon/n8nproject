@@ -14,11 +14,9 @@ services:
         value: "http"
       - key: N8N_BASIC_AUTH_ACTIVE
         value: "true"
-      - key: N8N_BASIC_AUTH_USER
-        value: "admin"
-      - key: N8N_BASIC_AUTH_PASSWORD
-        value: "adminpassword"
       - key: WEBHOOK_URL
-        value: "https://n8nproject-drsp.onrender.com/"
-      - key: GEMINI_API_KEY
-        value: "AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI"
+        value: "https://n8nproject-1.onrender.com/"
+    # Add these environment variables manually in Render dashboard:
+    # N8N_BASIC_AUTH_USER=your-username
+    # N8N_BASIC_AUTH_PASSWORD=your-password  
+    # GEMINI_API_KEY=your-api-key
