@@ -2,7 +2,8 @@ services:
   - type: web
     name: n8n-app
     runtime: docker
-    dockerfilePath: ./dockerfile
+    dockerfilePath: ./Dockerfile
+    dockerContext: ./
     plan: free
     envVars:
       - key: N8N_PORT
@@ -18,6 +19,6 @@ services:
       - key: N8N_BASIC_AUTH_PASSWORD
         value: "adminpassword"
       - key: WEBHOOK_URL
-        value: "https://your-app-name.onrender.com/"
+        value: "https://n8nproject-drsp.onrender.com/"
       - key: GEMINI_API_KEY
         value: "AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI"
