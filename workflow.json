@@ -17,7 +17,7 @@
         "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={{ $env.GEMINI_API_KEY }}",
         "jsonParameters": true,
         "options": {},
-        "bodyParametersJson": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"Generate a professional pitch for the following job description: {{ $json[\\\"job_description\\\"] }} and the user's profile: {{ $json[\\\"user_data\\\"] }}\" }\n      ]\n    }\n  ]\n}"
+        "bodyParametersJson": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"Generate a professional pitch for the following job description: {{ $json[\\\"job_description\\\"] }} and the user's profile: {{ $json[\\\"user_profile\\\"] }}\" }\n      ]\n    }\n  ]\n}"
       },
       "name": "Call Gemini API",
       "type": "n8n-nodes-base.httpRequest",
