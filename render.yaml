@@ -1,16 +1,28 @@
 services:
   - type: web
-    name: gemini-pitch-api
+    name: n8n-workflow-api
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: ./
     plan: free
     envVars:
+      - key: N8N_PORT
+        value: "5678"
+      - key: N8N_HOST
+        value: "0.0.0.0"
+      - key: N8N_PROTOCOL
+        value: "http"
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: "true"
+      - key: N8N_BASIC_AUTH_USER
+        value: "admin"
+      - key: N8N_BASIC_AUTH_PASSWORD
+        value: "adminpassword"
+      - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+        value: "false"
       - key: PORT
         value: "5678"
-      - key: NODE_ENV
-        value: "production"
+      - key: WEBHOOK_URL
+        value: "https://n8nproject-1.onrender.com/"
       - key: GEMINI_API_KEY
         value: "AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI"
-    # Health check endpoint
-    healthCheckPath: /
