@@ -12,6 +12,7 @@ USER root
 COPY workflow.json /tmp/workflow.json
 COPY startup.sh /tmp/startup.sh
 RUN chmod +x /tmp/startup.sh
+RUN chown node:node /tmp/startup.sh /tmp/workflow.json
 
 # Switch back to node user
 USER node
@@ -19,5 +20,5 @@ USER node
 # Expose port explicitly
 EXPOSE 5678
 
-# Use startup script to auto-import workflow
-CMD ["/tmp/startup.sh"]
+# Use the startup script with proper shell
+ENTRYPOINT ["/usr/bin/env", "sh", "/tmp/startup.sh"]

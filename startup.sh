@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 echo "🚀 Starting n8n and importing workflow..."
 
-# Start n8n with explicit port binding
-N8N_PORT=5678 N8N_HOST=0.0.0.0 n8n start &
+# Start n8n with explicit port binding using the correct executable path
+/usr/local/bin/n8n start &
 N8N_PID=$!
 
 # Wait for n8n to be ready
@@ -13,7 +13,7 @@ sleep 30
 # Check if n8n is responding
 echo "🔍 Checking if n8n is ready..."
 for i in 1 2 3 4 5; do
-  if curl -f -s http://localhost:5678/ > /dev/null 2>&1; then
+  if wget -q --spider http://localhost:5678/ 2>/dev/null; then
     echo "✅ n8n is responding on port 5678"
     break
   fi
@@ -23,21 +23,25 @@ done
 
 echo "📥 Importing workflow via API..."
 
-# Import workflow
-WORKFLOW_ID=$(curl -s -X POST "http://localhost:5678/rest/workflows" \
-  -H "Content-Type: application/json" \
-  -u "admin:adminpassword" \
-  -d @/tmp/workflow.json | jq -r '.id' 2>/dev/null || echo "")
+# Import workflow using wget instead of curl
+RESPONSE=$(wget -qO- --header="Content-Type: application/json" \
+  --post-data="$(cat /tmp/workflow.json)" \
+  --http-user="admin" --http-password="adminpassword" \
+  http://localhost:5678/rest/workflows 2>/dev/null)
+
+# Extract workflow ID (simple grep since jq might not be available)
+WORKFLOW_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
 
 echo "Workflow imported with ID: $WORKFLOW_ID"
 
 if [ ! -z "$WORKFLOW_ID" ] && [ "$WORKFLOW_ID" != "null" ]; then
   # Activate the workflow
   echo "✅ Activating workflow..."
-  curl -s -X PATCH "http://localhost:5678/rest/workflows/$WORKFLOW_ID" \
-    -H "Content-Type: application/json" \
-    -u "admin:adminpassword" \
-    -d '{"active": true}'
+  wget -qO- --header="Content-Type: application/json" \
+    --post-data='{"active": true}' \
+    --method=PATCH \
+    --http-user="admin" --http-password="adminpassword" \
+    http://localhost:5678/rest/workflows/$WORKFLOW_ID >/dev/null 2>&1
   
   echo "🎉 Workflow is now ACTIVE and ready!"
   echo "🔗 API endpoint: /webhook/pitch"
