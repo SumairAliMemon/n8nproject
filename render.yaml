@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: n8n-workflow-api
+    name: n8n-auto-workflow
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: ./
@@ -22,7 +22,5 @@ services:
         value: "false"
       - key: PORT
         value: "5678"
-      - key: WEBHOOK_URL
-        value: "https://n8nproject-1.onrender.com/"
       - key: GEMINI_API_KEY
         value: "AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI"

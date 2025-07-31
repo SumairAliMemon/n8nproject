@@ -15,14 +15,11 @@ app.get('/', (req, res) => {
   res.json({
     status: 'success',
     message: 'Gemini Pitch API is running',
-    endpoints: {
-      pitch: 'POST /pitch',
-      health: 'GET /'
-    }
+    endpoint: 'POST /pitch'
   });
 });
 
-// Main pitch generation endpoint (matching your n8n workflow)
+// Main pitch endpoint - exactly like your n8n workflow
 app.post('/pitch', async (req, res) => {
   try {
     const { text } = req.body;
@@ -34,7 +31,7 @@ app.post('/pitch', async (req, res) => {
       });
     }
 
-    // Call Gemini API (same as your n8n workflow)
+    // Call Gemini API (same as your n8n HTTP Request node)
     const geminiResponse = await axios.post(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
       {
@@ -56,12 +53,11 @@ app.post('/pitch', async (req, res) => {
       }
     );
 
-    // Extract reply (same logic as your Extract Reply node)
+    // Extract reply (same as your Extract Reply function node)
     const reply = geminiResponse.data.candidates[0].content.parts[0].text;
 
-    // Return response
+    // Return response (same as your webhook response)
     res.json({
-      status: 'success',
       reply: reply
     });
 
@@ -78,9 +74,9 @@ app.post('/pitch', async (req, res) => {
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Gemini Pitch API running on port ${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/`);
-  console.log(`🎯 Pitch endpoint: http://localhost:${PORT}/pitch`);
+  console.log(`🚀 Pitch API running on port ${PORT}`);
+  console.log(`📡 Health: http://localhost:${PORT}/`);
+  console.log(`🎯 Endpoint: POST http://localhost:${PORT}/pitch`);
 });
 
 module.exports = app;
