@@ -10,10 +10,10 @@ ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
 USER root
 RUN mkdir -p /home/node/.n8n/workflows
 COPY workflow.json /tmp/workflow.json
-COPY import-workflow.sh /tmp/import-workflow.sh
-RUN chmod +x /tmp/import-workflow.sh
+COPY import-workflow.sh /home/node/import-workflow.sh
+RUN chmod +x /home/node/import-workflow.sh
 RUN chown -R node:node /home/node/.n8n
-RUN chown node:node /tmp/workflow.json /tmp/import-workflow.sh
+RUN chown node:node /tmp/workflow.json /home/node/import-workflow.sh
 
 # Switch back to node user
 USER node
@@ -22,4 +22,4 @@ USER node
 EXPOSE 5678
 
 # Use custom startup that imports workflow
-CMD ["/tmp/import-workflow.sh"]
+CMD ["/bin/sh", "/home/node/import-workflow.sh"]
