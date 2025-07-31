@@ -6,14 +6,11 @@ ENV N8N_HOST=0.0.0.0
 ENV N8N_PROTOCOL=http
 ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
 
-# Copy workflow and import script
+# Copy workflow and startup script
 USER root
-RUN mkdir -p /home/node/.n8n/workflows
 COPY workflow.json /tmp/workflow.json
-COPY import-workflow.sh /home/node/import-workflow.sh
-RUN chmod +x /home/node/import-workflow.sh
-RUN chown -R node:node /home/node/.n8n
-RUN chown node:node /tmp/workflow.json /home/node/import-workflow.sh
+COPY startup.sh /tmp/startup.sh
+RUN chmod +x /tmp/startup.sh
 
 # Switch back to node user
 USER node
@@ -21,5 +18,5 @@ USER node
 # Expose port
 EXPOSE 5678
 
-# Use custom startup that imports workflow
-CMD ["/bin/sh", "/home/node/import-workflow.sh"]
+# Use startup script to auto-import workflow
+ENTRYPOINT ["/tmp/startup.sh"]

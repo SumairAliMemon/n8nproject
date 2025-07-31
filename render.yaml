@@ -20,6 +20,8 @@ services:
         value: "adminpassword"
       - key: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
         value: "false"
+      - key: N8N_WORKFLOWS_IMPORT_DIR
+        value: "/home/node/.n8n/workflows"
       - key: PORT
         value: "5678"
       - key: GEMINI_API_KEY

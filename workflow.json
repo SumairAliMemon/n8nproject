@@ -1,51 +1,43 @@
 {
+  "name": "Gemini Prompt API",
   "nodes": [
     {
-      "id": "webhook_node",
       "parameters": {
         "httpMethod": "POST",
         "path": "pitch",
         "responseMode": "lastNode",
         "options": {}
       },
+      "id": "webhook_node",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        200,
-        300
-      ]
+      "position": [200, 300]
     },
     {
-      "id": "gemini_api_node",
       "parameters": {
         "requestMethod": "POST",
         "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
         "jsonParameters": true,
         "options": {},
         "bodyParametersJson": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"{{$json[\"text\"]}}\"\n        }\n      ]\n    }\n  ]\n}",
-        "headerParametersJson": "{\n  \"Content-Type\": \"application/json\",\n  \"X-goog-api-key\": \"AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI\"\n}"
+        "headerParametersJson": "{\n  \"Content-Type\": \"application/json\",\n  \"X-goog-api-key\": \"{{$env.GEMINI_API_KEY}}\"\n}"
       },
+      "id": "gemini_api_node",
       "name": "Gemini API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
-      "position": [
-        460,
-        300
-      ]
+      "position": [460, 300]
     },
     {
-      "id": "extract_reply_node",
       "parameters": {
         "functionCode": "return [{\n  json: {\n    reply: $json[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"]\n  }\n}];"
       },
+      "id": "extract_reply_node",
       "name": "Extract Reply",
       "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [
-        700,
-        300
-      ]
+      "position": [700, 300]
     }
   ],
   "connections": {
@@ -72,8 +64,7 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {},
-  "name": "Gemini Prompt API",
   "versionId": "v1"
 }
