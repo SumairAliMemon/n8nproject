@@ -1,13 +1,14 @@
-"# n8n Pitch Generator
+"# Gemini Pitch API
 
-A simple n8n workflow that generates professional pitches using Google's Gemini AI API.
+A standalone Node.js API that generates professional content using Google's Gemini AI.
 
 ## Features
 
-- HTTP trigger endpoint for generating pitches
-- Integration with Google Gemini AI API
+- RESTful API endpoint for text generation
+- Integration with Google Gemini 2.0 Flash API
 - Clean JSON response format
 - Environment-based configuration
+- CORS enabled for web applications
 
 ## Deployment on Render
 
@@ -19,10 +20,6 @@ A simple n8n workflow that generates professional pitches using Google's Gemini 
    - Click "New" → "Web Service"
    - Connect your GitHub repository
 3. **Render will automatically detect the `render.yaml` file and deploy**
-4. **Update environment variables:**
-   - Go to your service settings
-   - Update `WEBHOOK_URL` with your actual Render URL
-   - Change `N8N_BASIC_AUTH_USER` and `N8N_BASIC_AUTH_PASSWORD` for security
 
 ### Option 2: Manual Setup
 
@@ -30,72 +27,102 @@ A simple n8n workflow that generates professional pitches using Google's Gemini 
 2. **Connect your GitHub repo**
 3. **Configure:**
    - **Runtime:** Docker
-   - **Dockerfile Path:** `./dockerfile`
+   - **Dockerfile Path:** `./Dockerfile`
    - **Port:** 5678
 4. **Add Environment Variables:**
    ```
-   N8N_PORT=5678
-   N8N_HOST=0.0.0.0
-   N8N_PROTOCOL=http
-   N8N_BASIC_AUTH_ACTIVE=true
-   N8N_BASIC_AUTH_USER=your-username
-   N8N_BASIC_AUTH_PASSWORD=your-password
-   WEBHOOK_URL=https://your-app-name.onrender.com/
+   PORT=5678
+   NODE_ENV=production
    GEMINI_API_KEY=your-gemini-api-key
    ```
 
 ## API Usage
 
-### Endpoint
+### Health Check
+```
+GET https://your-app-name.onrender.com/
+```
+
+### Generate Content
 ```
 POST https://your-app-name.onrender.com/webhook/generate-pitch
+```
+
+```
+POST https://your-app-name.onrender.com/pitch
 ```
 
 ### Request Body
 ```json
 {
-    "job_description": "Software Engineer position at tech startup",
-    "user_data": {
-        "name": "John Doe",
-        "skills": ["JavaScript", "React", "Node.js"],
-        "experience": "3 years"
-    }
+  "text": "Generate a professional pitch for a software engineer position"
 }
 ```
 
 ### Response
 ```json
 {
-    "pitch": "Dear Hiring Manager, I am excited to apply for the Software Engineer position..."
+  "status": "success",
+  "reply": "Your generated content from Gemini AI..."
 }
+```
+
+## Example Usage
+
+### Using curl
+```bash
+curl -X POST https://your-app-name.onrender.com/pitch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Create a professional LinkedIn post about learning React.js"
+  }'
+```
+
+### Using JavaScript (fetch)
+```javascript
+const response = await fetch('https://your-app-name.onrender.com/pitch', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    text: 'Write a cover letter for a data scientist position'
+  })
+});
+
+const data = await response.json();
+console.log(data.reply);
 ```
 
 ## Local Development
 
 1. **Clone the repository**
-2. **Copy environment variables:**
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Copy environment variables:**
    ```bash
    cp .env.example .env
    ```
-3. **Update `.env` with your actual values**
-4. **Run with Docker Compose:**
+4. **Update `.env` with your Gemini API key**
+5. **Run the server:**
    ```bash
-   docker-compose up
+   npm start
    ```
-5. **Access n8n at:** `http://localhost:5678`
+6. **Access API at:** `http://localhost:5678`
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `N8N_BASIC_AUTH_USER` | Username for n8n basic auth |
-| `N8N_BASIC_AUTH_PASSWORD` | Password for n8n basic auth |
-| `GEMINI_API_KEY` | Your Google Gemini API key |
-| `WEBHOOK_URL` | Your deployment URL |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | 5678 |
+| `NODE_ENV` | Environment | production |
+| `GEMINI_API_KEY` | Your Google Gemini API key | Required |
 
 ## Security Notes
 
-- Always change default authentication credentials
-- Keep your API keys secure
+- Keep your Gemini API key secure
 - Use environment variables for sensitive data
-- Don't commit `.env` file to version control" 
+- Don't commit `.env` file to version control
+- Consider implementing rate limiting for production use" 

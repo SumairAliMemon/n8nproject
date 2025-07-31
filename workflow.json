@@ -1,62 +1,79 @@
 {
   "nodes": [
     {
+      "id": "webhook_node",
       "parameters": {
-        "path": "generate-pitch",
-        "method": "POST",
-        "responseMode": "onReceived"
+        "httpMethod": "POST",
+        "path": "pitch",
+        "responseMode": "lastNode",
+        "options": {}
       },
-      "name": "HTTP Trigger",
-      "type": "n8n-nodes-base.httpTrigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [200, 300]
+      "position": [
+        200,
+        300
+      ]
     },
     {
+      "id": "gemini_api_node",
       "parameters": {
         "requestMethod": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
         "jsonParameters": true,
         "options": {},
-        "bodyParametersJson": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        { \"text\": \"Generate a professional pitch for the following job description: {{ $json[\\\"job_description\\\"] }} and the user's profile: {{ $json[\\\"user_profile\\\"] }}\" }\n      ]\n    }\n  ]\n}"
+        "bodyParametersJson": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"{{$json[\"text\"]}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "headerParametersJson": "{\n  \"Content-Type\": \"application/json\",\n  \"X-goog-api-key\": \"AIzaSyApeU7dGzKFodIYkqOUOM0-SetHQ-jVPXI\"\n}"
       },
-      "name": "Call Gemini API",
+      "name": "Gemini API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 1,
-      "position": [400, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
+      "id": "extract_reply_node",
       "parameters": {
-        "responseMode": "onReceived",
-        "responseData": "={{ $node[\"Call Gemini API\"].json[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"] }}"
+        "functionCode": "return [{\n  json: {\n    reply: $json[\"candidates\"][0][\"content\"][\"parts\"][0][\"text\"]\n  }\n}];"
       },
-      "name": "Return Pitch",
-      "type": "n8n-nodes-base.httpResponse",
+      "name": "Extract Reply",
+      "type": "n8n-nodes-base.function",
       "typeVersion": 1,
-      "position": [600, 300]
+      "position": [
+        700,
+        300
+      ]
     }
   ],
   "connections": {
-    "HTTP Trigger": {
+    "Webhook": {
       "main": [
         [
           {
-            "node": "Call Gemini API",
+            "node": "Gemini API",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Call Gemini API": {
+    "Gemini API": {
       "main": [
         [
           {
-            "node": "Return Pitch",
+            "node": "Extract Reply",
             "type": "main",
             "index": 0
           }
         ]
       ]
     }
-  }
+  },
+  "active": false,
+  "settings": {},
+  "name": "Gemini Prompt API",
+  "versionId": "v1"
 }

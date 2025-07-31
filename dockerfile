@@ -1,13 +1,24 @@
-FROM n8nio/n8n:latest
+FROM node:18-alpine
 
-# Expose port for Render
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# Copy application code
+COPY server.js ./
+COPY .env ./
+
+# Expose port
 EXPOSE 5678
 
-# Set environment variables for Render
-ENV N8N_PORT=5678
-ENV N8N_HOST=0.0.0.0
-ENV N8N_PROTOCOL=http
-ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=5678
 
-# The n8nio/n8n image already has the correct ENTRYPOINT and CMD
-# We don't need to override them, just let the image use its defaults
+# Start the application
+CMD ["npm", "start"]
